@@ -16,10 +16,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>pizza</td>
-                    <td>pizzas</td>
-                </tr>
+                @foreach($recipes as $recipe)
+                    <tr>
+                        <td>{{ $recipe->title }}</td>
+                        <td>{{ $recipe->category->name }}</td>
+                        <td>
+                            <a href="" class="btn btn-danger mr-2">Delete</a>
+                            <a href="" class="btn btn-dark mr-2">Edit</a>
+                            <a href="" class="btn btn-success mr-2">Check</a>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 @endsection

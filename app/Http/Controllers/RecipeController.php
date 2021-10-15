@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\CategoryRecipe;
+use App\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
 
 class RecipeController extends Controller
 {
@@ -19,8 +23,10 @@ class RecipeController extends Controller
     }
     
     public function index()
-    {
-        return view('recipes.index');
+    {   
+        $recipes = auth()->user()->recipes;
+
+        return view('recipes.index')->with('recipes', $recipes);
     }
 
     /**
@@ -29,8 +35,11 @@ class RecipeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        return view('recipes.create');
+    {   
+        
+        $categories = CategoryRecipe::all(['id','name']);
+
+        return view('recipes.create')->with('categories',$categories);
     }
 
     /**
@@ -42,11 +51,24 @@ class RecipeController extends Controller
     public function store(Request $request)
     {   
         $data = $request->validate([
-            'title' => 'required|min:5'
+            'title' => 'required|min:5',
+            'category' => 'required',
+            'preparation' => 'required',
+            'ingredients' => 'required',
+            'img' => 'required|image'
         ]);
 
-        DB::table('recipes')->insert([
-            'title' => $data['title']
+        $imgPath = $request['img']->store('uploads-recipes', 'public');
+
+        $img = Image::make( public_path("storage/{$imgPath}"))->fit(1000,550);
+        $img->save();
+
+        auth()->user()->recipes()->create([
+            'title' => $data['title'],
+            'preparation' => $data['preparation'],
+            'ingredients' => $data['ingredients'],
+            'img' => $imgPath,
+            'category_id' => $data['category']
         ]);
 
         return redirect()->action('RecipeController@index');
@@ -59,8 +81,10 @@ class RecipeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
+    {   
+        $recipe = Recipe::findOrFail($id);
+
+        return view('recipes.show', compact('recipe'));
     }
 
     /**
