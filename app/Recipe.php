@@ -11,6 +11,13 @@ class Recipe extends Model
     ];
 
     public function category(){
-        return $this->belongsTo(CategoryRecipe::class);
+        return $this->belongsTo(CategoryRecipe::class, 'category_id');
+    }
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function likes(){
+        return $this->belongsToMany(User::class, 'likes_recipe');
     }
 }

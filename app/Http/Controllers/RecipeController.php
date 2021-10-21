@@ -19,14 +19,16 @@ class RecipeController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => 'show']);
     }
     
     public function index()
     {   
-        $recipes = auth()->user()->recipes;
+        $user = auth()->user();
 
-        return view('recipes.index')->with('recipes', $recipes);
+        $recipes = Recipe::where('user_id', $user->id)->paginate(2);
+
+        return view('recipes.index', compact('recipes', 'user'));
     }
 
     /**
@@ -84,7 +86,11 @@ class RecipeController extends Controller
     {   
         $recipe = Recipe::findOrFail($id);
 
-        return view('recipes.show', compact('recipe'));
+        //watch if the current user liked the recipe
+        $like = (auth()->user()) ? auth()->user()->likes->contains($recipe->id): false;
+        $likes = $recipe->likes->count();
+
+        return view('recipes.show', compact('recipe', 'like', 'likes'));
     }
 
     /**
@@ -94,8 +100,12 @@ class RecipeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
-        //
+    {   
+        $recipe = Recipe::findOrFail($id);
+        $this->authorize('view', $recipe);
+        $categories = CategoryRecipe::all(['id','name']);
+
+        return view('recipes.edit', compact('recipe', 'categories'));
     }
 
     /**
@@ -106,8 +116,34 @@ class RecipeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //
+    {   
+        $recipe = Recipe::findOrFail($id);
+
+        $this->authorize('udpate', $recipe);
+
+        $data = $request->validate([
+            'title' => 'required|min:5',
+            'category' => 'required',
+            'preparation' => 'required',
+            'ingredients' => 'required',
+        ]);
+
+        $recipe->title = $data['title'];
+        $recipe->preparation = $data['preparation'];
+        $recipe->ingredients = $data['ingredients'];
+        $recipe->category_id = $data['category'];
+
+        if(request('img')){
+            $imgPath = $request['img']->store('uploads-recipes', 'public'); 
+            $img = Image::make( public_path("storage/{$imgPath}"))->fit(1000,550);
+            $img->save();
+            $recipe->img = $imgPath;
+        }
+
+        $recipe->save();
+
+
+        return redirect()->action('RecipeController@index');
     }
 
     /**
@@ -117,7 +153,10 @@ class RecipeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        //
+    {   
+        $recipe = Recipe::findOrFail($id);
+        $this->authorize('delete', $recipe);
+        $recipe->delete();
+        return redirect()->action('RecipeController@index');
     }
 }

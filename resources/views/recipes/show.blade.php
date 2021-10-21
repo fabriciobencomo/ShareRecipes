@@ -8,20 +8,23 @@
     <article class="content-recipe">
         <h1 class="text-center mb-5">{{$recipe->title}}</h1>
         <div class="recipe-img mb-3">
-            <img src="/storage/{{ $recipe->img }}" alt="recipe" class="" style="width: 1100px">
+            <img src="/storage/{{ $recipe->img }}" alt="recipe" class="w-100" >
         </div>
         <div class="recipe-meta">
-            <p class="text-center">
+            <p>
                 <span class="font-weigth-bold text-primary">Category:</span>
                 {{$recipe->category->name}}
             </p>
-            <p class="text-center">
+            <p>
                 <span class="font-weigth-bold text-primary">Author:</span>
-                {{$recipe->user_id}}
+                {{$recipe->user->name}}
             </p>
-            <p class="text-center">
-                <span class="font-weigth-bold text-primary">Author:</span>
-                {{$recipe->user_id}}
+            <p>
+                <span class="font-weigth-bold text-primary">Published Date:</span>
+                @php
+                    $time = $recipe->created_at;
+                @endphp
+                <time-component time="{{ $time }}"></time-component>
             </p>
         </div>
         <div class="ingredients">
@@ -32,5 +35,9 @@
             <h2 class="text-primary my-3">Preparation</h2>
             {!! $recipe->preparation !!}
         </div>
+        <div class="justify-content-center row text-center">
+            <like-component recipe-id="{{$recipe->id}}" liked="{{$like}}" likes="{{$likes}}"></like-component>
+        </div>
+
     </article>
 @endsection
