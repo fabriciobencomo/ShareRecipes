@@ -13,10 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/categories/{categoryRecipe}', 'CategoryController@show')->name('categories.show');
+Route::get('/', 'StartController@index')->name('start.index');
 Route::get('/recipes', 'RecipeController@index')->name('recipes.index');
 Route::get('/recipes/create', 'RecipeController@create')->name('recipes.create');
 Route::post('/recipes', 'RecipeController@store')->name('recipes.store');
@@ -27,6 +25,7 @@ Route::delete('/recipes/{recipe}', 'RecipeController@destroy')->name('recipes.de
 
 Route::post('/recipes/{recipe}', 'LikesController@update')->name('likes.update');
 
+route::get('/search', 'RecipeController@search')->name('search.show');
 
 //Route::resource('recipes', RecipeController::class);
 

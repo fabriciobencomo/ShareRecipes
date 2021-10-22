@@ -5,19 +5,19 @@
 @endsection
 
 @section('content')
-    <article class="content-recipe">
+    <article class="content-recipe bg-white p-3 shadow">
         <h1 class="text-center mb-5">{{$recipe->title}}</h1>
         <div class="recipe-img mb-3">
             <img src="/storage/{{ $recipe->img }}" alt="recipe" class="w-100" >
         </div>
-        <div class="recipe-meta">
+        <div class="recipe-meta mt-3">
             <p>
                 <span class="font-weigth-bold text-primary">Category:</span>
-                {{$recipe->category->name}}
+                <a class="text-dark" href="{{route('categories.show', ['categoryRecipe' => $recipe->category->id ])}}">{{$recipe->category->name}}</a>
             </p>
             <p>
                 <span class="font-weigth-bold text-primary">Author:</span>
-                {{$recipe->user->name}}
+                <a class="text-dark" href="{{route('profiles.show', ['profile' => $recipe->user->id ])}}">{{$recipe->user->name}}</a>
             </p>
             <p>
                 <span class="font-weigth-bold text-primary">Published Date:</span>

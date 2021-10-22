@@ -79,6 +79,27 @@
                 </div>
             </div>
         </nav>
+        <nav class="navbar navbar-expand-md navbar-light categories-bg">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#categories" aria-controls="categories" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                    Categories
+                </button>
+                <div class="collapse navbar-collapse " id="categories">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav w-100 d-flex justify-content-between">
+                        @foreach ($categories as $category)
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('categories.show', ['categoryRecipe' => $category->id ]) }}">
+                                {{ $category->name }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        @yield('hero')
         <div class="container">
             <div class="row">
                 <div class="py-4 mt-5 col-12">

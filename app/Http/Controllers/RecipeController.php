@@ -19,7 +19,7 @@ class RecipeController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth', ['except' => 'show']);
+        $this->middleware('auth', ['except' => ['show', 'search']]);
     }
     
     public function index()
@@ -158,5 +158,14 @@ class RecipeController extends Controller
         $this->authorize('delete', $recipe);
         $recipe->delete();
         return redirect()->action('RecipeController@index');
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request['search'];
+        
+        $recipes = Recipe::where('title', 'like', '%' . $search . '%')->paginate(9);
+        $recipes->appends(['search' => $search]);
+        return view('search.show', compact('recipes', 'search'));
     }
 }
