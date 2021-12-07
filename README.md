@@ -21,6 +21,9 @@ SharesRecipes is forum where you can create, search, save and like recipes. The 
 -composer
 `composer install`
 
+-database
+`php artisan migrate`
+
 # How can you watch it?
 
 just run the cmd `php artisan serve`
